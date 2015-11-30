@@ -59,9 +59,9 @@ public class EnemyGuard extends Enemy{
 //	// a modified getTargetNode class, this 
 	protected AStarNode getTargetNode() {
 		if (playerState.position.dst(
-				state.position) < 250 && 
+				state.position) < (5*Square.squareSize) && 
 				playerState.position.dst(
-						state.position) > 150) {
+						state.position) > (3*Square.squareSize)) {
 //		if (true){
 			useAlturnateTarget = true;
 			Square midPoint = Square.getSquare(player.midPointPos.x + Square.xOffset, player.midPointPos.y + Square.yOffset);

@@ -12,6 +12,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
@@ -21,8 +22,8 @@ import com.badlogic.gdx.utils.Timer.Task;
 public class GearsController implements GestureListener {
 	
 	GearState gearState;
-	private Texture gear;
-	private Texture gearSelected;
+	private Sprite gear;
+	private Sprite gearSelected;
 	public ArrayList<Square> highlighted;
 	public final int totalNumOfBelts;
 	public int numOfBelts;
@@ -38,8 +39,10 @@ public class GearsController implements GestureListener {
 		this.playController = playController;
 		timer = new Timer();
 		
-		gear = new Texture("img/gear.png");
-		gearSelected = new Texture("img/highlightedGear.png");
+		gear = new Sprite(new Texture("img/gear.png"));
+		gearSelected = new Sprite(new Texture("img/highlightedGear.png"));
+		gear.setSize((float)0.8*Square.squareSize, (float)0.8*Square.squareSize);
+		gearSelected.setSize((float)0.8*Square.squareSize, (float)0.8*Square.squareSize);
 		
 		this.totalNumOfBelts = totalNumOfBelts;
 		numOfBelts = totalNumOfBelts;
@@ -48,45 +51,40 @@ public class GearsController implements GestureListener {
 	}
 	
 	//check if gear at that position, then check if another gear has been touch, then check if suitable to connect the two gears.
-	public void makeGearTouch(float x, float y) {
-		float halfSquare = (float) (Square.squareSize / 2.3);
-		int doubleSquare = (int) Square.squareSize * 2;
-		Square square = new Square( (((int)(x - halfSquare) / doubleSquare) * 2) + 1, (((int)(y - halfSquare) / doubleSquare) * 2) + 1);
+	public void makeGearTouch(Square square) {
 		
 		Gdx.app.log("Square Generated", square.toString());
 		
-		if( square.x > 0 && square.y > 0 && square.x < GearState.gearBelts.length && square.y < GearState.gearBelts[0].length ) {
-			if (highlighted.size() > 0) {
-				GearState.gearBelts[square.x][square.y] = GearBelts.GEAR_SELECTED;
-				Square compare = highlighted.get(0);
-				if ( Math.abs(square.x - compare.x) == 2 && Math.abs(square.y - compare.y) == 2 && square.x != compare.x && square.y != compare.y ) {
-					highlighted = new ArrayList<Square>();
-					
-					gearState.setNewGearBelt(square, compare);
-					
-					if((--numOfBelts) < 1) {
-						stillSelecting = false;
+		if (highlighted.size() > 0) {
+			Square compare = highlighted.get(0);
+			if ( Math.abs(square.x - compare.x) == 2 && Math.abs(square.y - compare.y) == 2 && square.x != compare.x && square.y != compare.y ) {
+				//reset the highlighted array list
+				highlighted = new ArrayList<Square>();
+				
+				gearState.setNewGearBelt(square, compare);
+				
+				if((--numOfBelts) < 1) {
+					stillSelecting = false;
 
-						Gdx.app.log("timer", "starting timer");
-						timer.scheduleTask(new Task(){
-							
-						    @Override
-						    public void run() {
-								Gdx.app.log("timer", "running timer");
-						    	((Game) Gdx.app.getApplicationListener()).setScreen(new ConfirmationScreen(sound, playController));
-						    }
-						}, 1); 	 
-					}
-				} else {
-					GearState.gearBelts[compare.x][compare.y] = GearBelts.GEAR;
-					highlighted = new ArrayList<Square>();
-					GearState.gearBelts[square.x][square.y] = GearBelts.GEAR_SELECTED;
-					highlighted.add(square);
+					Gdx.app.log("timer", "starting timer");
+					timer.scheduleTask(new Task(){
+						
+					    @Override
+					    public void run() {
+							Gdx.app.log("timer", "running timer");
+					    	((Game) Gdx.app.getApplicationListener()).setScreen(new ConfirmationScreen(sound, playController));
+					    }
+					}, 1); 	 
 				}
 			} else {
+				GearState.gearBelts[compare.x][compare.y] = GearBelts.GEAR;
+				highlighted = new ArrayList<Square>();
 				GearState.gearBelts[square.x][square.y] = GearBelts.GEAR_SELECTED;
 				highlighted.add(square);
 			}
+		} else {
+			GearState.gearBelts[square.x][square.y] = GearBelts.GEAR_SELECTED;
+			highlighted.add(square);
 		}
 	}
 	
@@ -97,10 +95,12 @@ public class GearsController implements GestureListener {
 			for (int j = 1; j < gearState.y; j += 2) {
 				switch(GearState.gearBelts[i][j]){
 					case GEAR:
-						batch.draw(gear, i * Square.squareSize, j * Square.squareSize); //TODO set offsets
+						gear.setPosition(i * Square.squareSize, j * Square.squareSize);
+						gear.draw(batch); //TODO set offsets
 						break;
 					case GEAR_SELECTED:
-						batch.draw(gearSelected, i * Square.squareSize, j * Square.squareSize); //TODO set offsets
+						gearSelected.setPosition(i * Square.squareSize, j * Square.squareSize); //TODO set offsets
+						gearSelected.draw(batch);
 						break;
 				default:
 					break;
@@ -120,8 +120,14 @@ public class GearsController implements GestureListener {
 		Gdx.app.log("TAP", "You 'tap' the screen at: " + screenX + " ; " + screenY);
 		// out of bounds of play.
 //		if ( screenX > 850 || screenY < 50 ) return false;
-		if(stillSelecting) {
-			makeGearTouch(screenX, Gdx.graphics.getHeight() - screenY);
+		if(stillSelecting) {	
+			float halfSquare = (float) (Square.squareSize / 2.3);
+			int doubleSquare = (int) Square.squareSize * 2;
+			Square square = new Square( (((int)(screenX - halfSquare) / doubleSquare) * 2) + 1, (((int)(Gdx.graphics.getHeight() - screenY - halfSquare) / doubleSquare) * 2) + 1);
+
+			if( square.x > 0 && square.y > 0 && square.x < GearState.gearBelts.length && square.y < GearState.gearBelts[0].length ) {
+				makeGearTouch(square);
+			}
 		}
 		return true;
 	}

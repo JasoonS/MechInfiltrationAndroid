@@ -14,7 +14,7 @@ public class GameSoundController {
 		gameHasSound = true;
 		
 		music.setVolume((float) 0.25);
-		music.play();
+//		music.play();
 		
 	  	music.setOnCompletionListener(new Music.OnCompletionListener() {
 	     	@Override
@@ -33,7 +33,7 @@ public class GameSoundController {
 		gameHasSound = !gameHasSound;
 	}
 	
-	private void playSound(Sound sound){
-		if(gameHasSound) sound.play();
-	}
+//	private void playSound(Sound sound){
+//		if(gameHasSound) sound.play();
+//	}
 }

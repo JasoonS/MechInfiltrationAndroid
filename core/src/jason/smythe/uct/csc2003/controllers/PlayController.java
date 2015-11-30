@@ -47,7 +47,9 @@ public class PlayController {
 		w = Gdx.graphics.getWidth();
         h = Gdx.graphics.getHeight();
         Square.setOffset(0, 0, (h / 650) * Square.originalSquareSize);
-
+        Gdx.app.log("Set the offset", "set offset");
+        
+        
 		this.sound = sound;
 		
 		maps = new MapsController(mapToLoad);

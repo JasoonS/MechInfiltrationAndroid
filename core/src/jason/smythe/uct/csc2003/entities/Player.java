@@ -97,22 +97,22 @@ public class Player extends Entity {
 		int nextY = 0;
 		switch(GearState.gearBelts[state.curSquare.x][state.curSquare.y]) {
 		case START_R: 
-			beltMovement = new Vector2(100, 100);
+			beltMovement = new Vector2(super.speed, super.speed);
 			nextX = 2;
 			nextY = 2;
 			break;
 		case START_L: 
-			beltMovement = new Vector2( -100, 100);
+			beltMovement = new Vector2( -super.speed, super.speed);
 			nextX = -2;
 			nextY = 2;
 			break;
 		case END_R: 
-			beltMovement = new Vector2(-100, -100);
+			beltMovement = new Vector2(-super.speed, -super.speed);
 			nextX = -2;
 			nextY = -2;
 			break;
 		case END_L:
-			beltMovement = new Vector2(100, -100);
+			beltMovement = new Vector2(super.speed, -super.speed);
 			nextX = 2;
 			nextY = -2;
 			break;

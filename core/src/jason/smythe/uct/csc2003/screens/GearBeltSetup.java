@@ -38,6 +38,7 @@ public class GearBeltSetup implements Screen {
 		this.sound = sound;
 		this.playController = playController;
 		batch = new SpriteBatch();
+		shapeRenderer = new ShapeRenderer();
 //		background = new Texture("img/gearSelectBackground.png");
 	}
 

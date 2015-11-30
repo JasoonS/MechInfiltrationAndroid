@@ -24,12 +24,17 @@ public class Entity extends Sprite {
 		state.position = state.curSquare.squareToPos();
 		this.setPosition(state.position.x, state.position.y);
 		this.setSize((float)0.8*Square.squareSize, (float)0.8*Square.squareSize);
+		speed = Square.scale * 50;
+		Gdx.app.log("speed", "The player has a speed of " + speed);
 	}
 	
 	public Entity(Sprite sprite, EnemyState enemyState, int startX, int startY) {
 		super(sprite);
 		state = enemyState;
 		this.maps = enemyState.maps;
+		this.setSize((float)0.8*Square.squareSize, (float)0.8*Square.squareSize);
+		speed = Square.scale * 50;
+		Gdx.app.log("speed", "The Entity has a speed of " + speed);
 	}
 	
 	public void draw(SpriteBatch batch) {

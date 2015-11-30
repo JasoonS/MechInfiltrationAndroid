@@ -61,7 +61,7 @@ public class EnemyCautiousAttack extends Enemy{
 	
 //	// a modified getTargetNode class, this 
 	protected AStarNode getTargetNode() {
-		if (playerState.position.dst(state.position) > 200) {
+		if (playerState.position.dst(state.position) > (4*Square.squareSize)) {
 			useAlturnateTarget = true;
 			Square midPoint = 
 					Square.getSquare(

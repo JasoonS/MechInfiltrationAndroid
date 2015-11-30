@@ -48,7 +48,7 @@ public class MainMenu implements Screen {
 		stage = new Stage();
 		
 		atlas = new TextureAtlas("ui/buttons.pack");
-		skin = new Skin(atlas);
+		skin = new Skin(Gdx.files.internal("ui/menuButtonSettings.json"), atlas);
 
 		table = new Table(skin);
 		
